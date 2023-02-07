@@ -54,6 +54,7 @@ public class LoginControllerTest {
         perform.andDo(print())
                 .andExpect(status().is3xxRedirection())
                 .andExpect(model().attributeHasNoErrors("loginForm"))
+                .andExpect(cookie().exists("memberId"))
                 .andExpect(redirectedUrl("/"))
         ;
     }
