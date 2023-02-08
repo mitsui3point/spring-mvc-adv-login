@@ -37,9 +37,9 @@ public class HomeControllerTest {
 
     @Test
     void homeTest() throws Exception {
-        ResultActions perform = mvc.perform(get("/"));
+        ResultActions perform = mvc.perform(get("/").session(new MockHttpSession()));
 
-        ResultActions home = perform.andDo(print())
+        perform.andDo(print())
                 .andExpect(view().name("home"))
                 .andExpect(cookie().doesNotExist(LOGIN_MEMBER));
     }
