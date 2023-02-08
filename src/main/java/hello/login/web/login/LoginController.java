@@ -23,16 +23,15 @@ import javax.validation.Valid;
 @Slf4j
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/login")
 public class LoginController {
     private final LoginService loginService;
 
-    @GetMapping
+    @GetMapping("/login")
     public String loginForm(@ModelAttribute LoginForm loginForm) {
         return "login/loginForm";
     }
 
-    @PostMapping
+    @PostMapping("/login")
     public String login(@Valid @ModelAttribute LoginForm loginForm,
                         BindingResult bindingResult,
                         HttpServletResponse response) {
@@ -54,5 +53,17 @@ public class LoginController {
         //쿠키에 시간을 주지 않으면 세션쿠키(브라우저 종료시 쿠키 만료)
         response.addCookie(new Cookie("memberId", String.valueOf(login.getId())));
         return "redirect:/";
+    }
+
+    @PostMapping("/logout")
+    public String logout(HttpServletResponse response) {
+        expireCookie(response, "memberId");
+        return "redirect:/";
+    }
+
+    private void expireCookie(HttpServletResponse response, String cookieName) {
+        Cookie cookie = new Cookie(cookieName, null);
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
     }
 }

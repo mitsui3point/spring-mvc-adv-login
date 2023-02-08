@@ -74,6 +74,16 @@ public class LoginControllerTest {
         ;
     }
 
+    @Test
+    void logoutTest() throws Exception {
+        ResultActions perform = mvc.perform(post("/logout"));
+
+        perform.andDo(print())
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/"))
+                .andExpect(cookie().maxAge("memberId", 0));
+    }
+
     @AfterEach
     void tearDown() {
         memberRepository.clearStore();

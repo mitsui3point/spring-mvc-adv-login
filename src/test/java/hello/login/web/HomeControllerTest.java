@@ -62,14 +62,4 @@ public class HomeControllerTest {
                 .andExpect(view().name("loginHome"))
                 .andExpect(model().attribute("member", loginMember));
     }
-
-    @Test
-    void logoutTest() throws Exception {
-        ResultActions perform = mvc.perform(post("/logout"));
-
-        perform.andDo(print())
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/"))
-                .andExpect(cookie().maxAge("memberId", 0));
-    }
 }
