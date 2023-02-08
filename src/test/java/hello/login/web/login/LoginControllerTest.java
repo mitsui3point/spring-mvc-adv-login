@@ -3,6 +3,7 @@ package hello.login.web.login;
 import hello.login.domain.login.LoginService;
 import hello.login.domain.member.Member;
 import hello.login.domain.member.MemberRepository;
+import hello.login.session.SessionManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,10 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import javax.servlet.http.Cookie;
+
+import java.util.UUID;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -27,9 +32,12 @@ public class LoginControllerTest {
     @SpyBean
     private MemberRepository memberRepository;
 
+    @SpyBean
+    private SessionManager sessionManager;
+
     @BeforeEach
     void setUp() {
-        mvc = MockMvcBuilders.standaloneSetup(new LoginController(loginService)).build();
+        mvc = MockMvcBuilders.standaloneSetup(new LoginController(loginService, sessionManager)).build();
     }
 
     @Test
@@ -54,7 +62,7 @@ public class LoginControllerTest {
         perform.andDo(print())
                 .andExpect(status().is3xxRedirection())
                 .andExpect(model().attributeHasNoErrors("loginForm"))
-                .andExpect(cookie().exists("memberId"))
+                .andExpect(cookie().exists("mySessionId"))
                 .andExpect(redirectedUrl("/"))
         ;
     }
@@ -76,12 +84,13 @@ public class LoginControllerTest {
 
     @Test
     void logoutTest() throws Exception {
-        ResultActions perform = mvc.perform(post("/logout"));
+        ResultActions perform = mvc.perform(post("/logout")
+                .cookie(new Cookie("mySessionId", UUID.randomUUID().toString())));
 
         perform.andDo(print())
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/"))
-                .andExpect(cookie().maxAge("memberId", 0));
+        ;
     }
 
     @AfterEach
