@@ -1,5 +1,6 @@
 package hello.login.web.login;
 
+import hello.login.SessionConst;
 import hello.login.domain.login.LoginService;
 import hello.login.domain.member.Member;
 import hello.login.domain.member.MemberRepository;
@@ -10,13 +11,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import javax.servlet.http.Cookie;
-
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -62,9 +64,16 @@ public class LoginControllerTest {
         perform.andDo(print())
                 .andExpect(status().is3xxRedirection())
                 .andExpect(model().attributeHasNoErrors("loginForm"))
-                .andExpect(cookie().exists("mySessionId"))
                 .andExpect(redirectedUrl("/"))
-        ;
+                .andExpect(result -> assertEqualSessionMemberAndMember(member, result));
+
+    }
+
+    private void assertEqualSessionMemberAndMember(Member member, MvcResult result) {
+        Member sessionMember = (Member) result.getRequest()
+                .getSession()
+                .getAttribute(SessionConst.LOGIN_MEMBER);
+        assertThat(sessionMember).isEqualTo(member);
     }
 
     @Test

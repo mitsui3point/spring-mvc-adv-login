@@ -1,5 +1,6 @@
 package hello.login.web;
 
+import hello.login.SessionConst;
 import hello.login.domain.member.Member;
 import hello.login.domain.member.MemberRepository;
 import hello.login.session.SessionManager;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import static hello.login.session.SessionManager.SESSION_COOKIE_NAME;
 
@@ -47,7 +49,7 @@ public class HomeController {
         return "loginHome";
     }
 
-    @GetMapping("/")
+//    @GetMapping("/")
     public String loginHomeV2(HttpServletRequest request,
                               Model model) {
 
@@ -58,6 +60,25 @@ public class HomeController {
         }
 
         model.addAttribute("member", sessionMember);
+        return "loginHome";
+    }
+
+    @GetMapping("/")
+    public String loginHomeV3(HttpServletRequest request,
+                              Model model) {
+
+        HttpSession session = request.getSession(false);
+        if (session == null) {
+            return "home";
+        }
+
+        Member loginMember = (Member) session.getAttribute(SessionConst.LOGIN_MEMBER);
+
+        if (loginMember == null) {
+            return "home";
+        }
+
+        model.addAttribute("member", loginMember);
         return "loginHome";
     }
 }
