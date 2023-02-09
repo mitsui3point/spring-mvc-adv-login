@@ -18,15 +18,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(controllers = MemberController.class)
 public class MemberControllerTest {
     private MockMvc mvc;
-
-    @SpyBean
     private MemberRepository memberRepository;
 
     @BeforeEach
     void setUp() {
+        memberRepository = new MemberRepository();
         mvc = MockMvcBuilders.standaloneSetup(new MemberController(memberRepository)).build();
     }
 

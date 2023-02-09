@@ -19,18 +19,17 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(controllers = HomeController.class)
 public class HomeControllerTest {
     private MockMvc mvc;
 
-    @SpyBean
     private MemberRepository memberRepository;
 
-    @SpyBean
     private SessionManager sessionManager;
 
     @BeforeEach
     void setUp() {
+        memberRepository = new MemberRepository();
+        sessionManager = new SessionManager();
         mvc = MockMvcBuilders.standaloneSetup(new HomeController(memberRepository, sessionManager))
                 .build();
     }

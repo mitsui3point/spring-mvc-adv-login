@@ -9,6 +9,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -24,21 +25,19 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(controllers = LoginController.class)
 public class LoginControllerTest {
     private MockMvc mvc;
-
-    @SpyBean
-    private LoginService loginService;
-
-    @SpyBean
     private MemberRepository memberRepository;
 
-    @SpyBean
+    private LoginService loginService;
+
     private SessionManager sessionManager;
 
     @BeforeEach
     void setUp() {
+        memberRepository = new MemberRepository();
+        loginService = new LoginService(memberRepository);
+        sessionManager = new SessionManager();
         mvc = MockMvcBuilders.standaloneSetup(new LoginController(loginService, sessionManager)).build();
     }
 
