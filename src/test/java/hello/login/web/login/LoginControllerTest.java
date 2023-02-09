@@ -59,12 +59,13 @@ public class LoginControllerTest {
         ResultActions perform = mvc.perform(post("/login")
                 .param("loginId", member.getLoginId())
                 .param("password", member.getPassword())
+                .queryParam("redirectURL", "/items")
         );
 
         perform.andDo(print())
                 .andExpect(status().is3xxRedirection())
                 .andExpect(model().attributeHasNoErrors("loginForm"))
-                .andExpect(redirectedUrl("/"))
+                .andExpect(redirectedUrl("/items"))
                 .andExpect(result -> assertEqualSessionMemberAndMember(member, result));
 
     }
