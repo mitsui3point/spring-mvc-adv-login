@@ -3,6 +3,7 @@ package hello.login.web;
 import hello.login.domain.member.Member;
 import hello.login.domain.member.MemberRepository;
 import hello.login.session.SessionManager;
+import hello.login.web.annotation.LoginMemberArgumentResolver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -26,17 +27,23 @@ public class HomeControllerTest {
 
     private SessionManager sessionManager;
 
+    private LoginMemberArgumentResolver loginMemberArgumentResolver;
+
     @BeforeEach
     void setUp() {
         memberRepository = new MemberRepository();
         sessionManager = new SessionManager();
+        loginMemberArgumentResolver = new LoginMemberArgumentResolver();
         mvc = MockMvcBuilders.standaloneSetup(new HomeController(memberRepository, sessionManager))
+                .setCustomArgumentResolvers(loginMemberArgumentResolver)
                 .build();
     }
 
     @Test
     void homeTest() throws Exception {
-        ResultActions perform = mvc.perform(get("/").session(new MockHttpSession()));
+        ResultActions perform = mvc.perform(get("/")
+                .session(new MockHttpSession())
+        );
 
         perform.andDo(print())
                 .andExpect(view().name("home"))

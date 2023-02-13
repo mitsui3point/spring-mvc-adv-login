@@ -1,7 +1,9 @@
 package hello.login.web.interceptor;
 
+import hello.login.domain.item.ItemRepository;
 import hello.login.web.filter.LogFilter;
 import hello.login.web.filter.LoginCheckFilter;
+import hello.login.web.item.ItemController;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,7 +32,7 @@ public class LogInterceptorTest {
 
     @BeforeEach
     void setUp() {
-        mvc = MockMvcBuilders.webAppContextSetup(context)
+        mvc = MockMvcBuilders.standaloneSetup(new ItemController(new ItemRepository()))
                 .addFilters(new LogFilter(), new LoginCheckFilter())
                 .build();
     }
