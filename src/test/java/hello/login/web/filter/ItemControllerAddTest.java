@@ -5,7 +5,6 @@ import hello.login.domain.item.Item;
 import hello.login.domain.item.ItemRepository;
 import hello.login.web.item.ItemController;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -17,7 +16,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = {ItemController.class})
 @Import(value = {WebConfig.class, ItemRepository.class})
@@ -25,9 +23,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class ItemControllerAddTest {
     @Autowired
     private MockMvc mvc;
-
-    @Autowired
-    private ItemRepository itemRepository;
 
     @Test
     void itemsAccessNotAllowTest() throws Exception {
