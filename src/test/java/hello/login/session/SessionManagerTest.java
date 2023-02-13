@@ -6,8 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import java.util.Arrays;
-
 import static hello.login.session.SessionManager.SESSION_COOKIE_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 
