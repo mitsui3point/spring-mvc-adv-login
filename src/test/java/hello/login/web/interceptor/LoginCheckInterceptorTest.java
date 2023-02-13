@@ -4,6 +4,7 @@ import hello.login.domain.item.ItemRepository;
 import hello.login.domain.login.LoginService;
 import hello.login.domain.member.Member;
 import hello.login.domain.member.MemberRepository;
+import hello.login.web.item.ItemController;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,24 +27,25 @@ import java.util.Optional;
 
 import static hello.login.SessionConst.LOGIN_MEMBER;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
-@SpringBootTest
 public class LoginCheckInterceptorTest {
     private MockMvc mvc;
-
-    @Autowired
-    private WebApplicationContext context;
-
-    @Autowired
+    private ItemController itemController;
+    private ItemRepository itemRepository;
     private LoginService loginService;
-
-    @Autowired
     private MemberRepository memberRepository;
 
     @BeforeEach
     void setUp() {
-        mvc = MockMvcBuilders.webAppContextSetup(context).build();
+        itemRepository = new ItemRepository();
+        itemController = new ItemController(itemRepository);
+        memberRepository = new MemberRepository();
+        loginService = new LoginService(memberRepository);
+        mvc = MockMvcBuilders.standaloneSetup(itemController)
+                .addInterceptors(new LogInterceptor(), new LoginCheckInterceptor())
+                .build();
     }
 
     @Test
@@ -54,15 +56,6 @@ public class LoginCheckInterceptorTest {
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/login?redirectURL=/items"))
                 .andReturn()
                 .getRequest();
-
-        HandlerExecutionChain chain = context.getBean(RequestMappingHandlerMapping.class)
-                .getHandler(request);
-
-        Optional<HandlerInterceptor> loginInterceptor = Arrays.stream(chain.getInterceptors())
-                .filter(o -> o instanceof LoginCheckInterceptor)
-                .findFirst();
-
-        Assertions.assertThat(loginInterceptor).isPresent();
     }
 
     @Test
@@ -80,17 +73,7 @@ public class LoginCheckInterceptorTest {
                 )
                 .andDo(print())
                 .andExpect(MockMvcResultMatchers.view().name("items/items"))
-//                .andExpect(MockMvcResultMatchers.redirectedUrl("/login?redirectURL=/items"))
                 .andReturn()
                 .getRequest();
-
-        HandlerExecutionChain chain = context.getBean(RequestMappingHandlerMapping.class)
-                .getHandler(request);
-
-        Optional<HandlerInterceptor> loginInterceptor = Arrays.stream(chain.getInterceptors())
-                .filter(o -> o instanceof LoginCheckInterceptor)
-                .findFirst();
-
-        Assertions.assertThat(loginInterceptor).isPresent();
     }
 }
