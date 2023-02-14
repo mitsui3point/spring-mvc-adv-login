@@ -1,6 +1,7 @@
 package hello.login.web.filter;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -8,6 +9,7 @@ import java.io.IOException;
 import java.util.UUID;
 
 @Slf4j
+@Component
 public class LogFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
